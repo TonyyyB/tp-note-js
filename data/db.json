@@ -1,0 +1,16 @@
+{
+    "personnages":[
+        {
+            "id": 1,
+            "name": "Gandalf"
+        },
+        {
+            "id": 2,
+            "name": "Frodon"
+        },
+        {
+            "id": 3,
+            "name": "Aragorn"
+        }
+    ]
+}
