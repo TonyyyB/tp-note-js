@@ -1,6 +1,7 @@
 {
     "links": {
         "champions": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/champion.json",
+        "champion": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/champion/",
         "items": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/item.json",
         "championSquareImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/champion/",
         "championLoadingImageBase": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/",
