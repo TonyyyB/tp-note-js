@@ -67,4 +67,14 @@ export default class Provider {
             return [];
         }
     }
+
+    static async getSpellImageBase(name) {
+        try {
+            const links = await Provider.fetchLinks();
+            return links.spellImageBase + name;
+        } catch (error) {
+            console.error("getSpellImageBase:", error);
+            return [];
+        }
+    }
 }

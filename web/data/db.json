@@ -5,6 +5,7 @@
         "items": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/item.json",
         "championSquareImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/champion/",
         "championLoadingImageBase": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/",
+        "spellImageBase": "https://ddragon.leagueoflegends.com/cdn/img/spell/",
         "itemImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/item/"
     },
     "favorites": {
