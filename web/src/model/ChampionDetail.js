@@ -221,14 +221,6 @@ export default class ChampionDetail {
         divSpell.appendChild(spellDiv);
         });
 
-
-        
-        this.skins.forEach(skin => {
-            const option = document.createElement('option');
-            option.textContent = skin.name == "default" ? this.name : skin.name;
-            skinSelect.appendChild(option);
-        });
-
         const divInfoBase = document.createElement('div');
         divInfoBase.classList.add("info-base")
         detail.appendChild(divInfoBase);
