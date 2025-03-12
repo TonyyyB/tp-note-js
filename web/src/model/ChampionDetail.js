@@ -96,6 +96,7 @@ export default class ChampionDetail {
             spell.cooldownBurn, spell.cost, spell.costBurn, spell.costType, spell.range, spell.rangeBurn,
             spell.resource, spell.image
         ));
+        console.log(passive);
         this.passive = new Passive(passive.name, passive.description, passive.image);
         this.currentSkin = 0;
         this.loadSkinsImages();
@@ -192,20 +193,34 @@ export default class ChampionDetail {
         divSpell.classList.add("spell")
         detail.appendChild(divSpell);
 
+        const imagePassive = document.createElement('img');
+        imagePassive.src = await Provider.getPassiveImageBase(this.passive.image);
+
+        const ulPassive = document.createElement('ul');
+        ulPassive.innerHTML = `
+            <li> ${this.passive.name}}</li>
+            <li> Description: ${this.passive.description}</li>
+        `;
+
+        divSpell.appendChild(imagePassive);
+        divSpell.appendChild(ulPassive);
+
         this.spells.forEach(async spell => {
             const spellDiv = document.createElement('div');
-            const image = document.createElement('img');
-            image.src = await Provider.getSpellImageBase(spell.image);
-            spellDiv.appendChild(image);
+            const imageSpell = document.createElement('img');
+            imageSpell.src = await Provider.getSpellImageBase(spell.image);
+            spellDiv.appendChild(imageSpell);
             const ulSpell = document.createElement('ul');
             ulSpell.innerHTML = `
             <li> ${spell.name}}</li>
             <li> Description: ${spell.description}</li>
             <li> Cooldown: ${spell.cooldown}</li>
         `;
+
         spellDiv.appendChild(ulSpell);
         divSpell.appendChild(spellDiv);
         });
+
 
         
         this.skins.forEach(skin => {

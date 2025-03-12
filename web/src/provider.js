@@ -77,4 +77,14 @@ export default class Provider {
             return [];
         }
     }
+
+    static async getPassiveImageBase(name) {
+        try {
+            const links = await Provider.fetchLinks();
+            return links.passiveImageBase + name;
+        } catch (error) {
+            console.error("getPassiveImageBase:", error);
+            return [];
+        }
+    }
 }
