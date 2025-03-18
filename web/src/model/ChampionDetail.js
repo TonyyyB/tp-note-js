@@ -57,7 +57,7 @@ class Spell {
         this.range = range;
         this.rangeBurn = rangeBurn;
         this.resource = resource;
-        this.image = new Image(image.full, image.sprite, image.group, image.x, image.y, image.w, image.h);
+        this.image = image.full;
     }
 }
 
@@ -96,6 +96,7 @@ export default class ChampionDetail {
             spell.cooldownBurn, spell.cost, spell.costBurn, spell.costType, spell.range, spell.rangeBurn,
             spell.resource, spell.image
         ));
+        console.log(passive);
         this.passive = new Passive(passive.name, passive.description, passive.image);
         this.currentSkin = 0;
         this.loadSkinsImages();
@@ -142,9 +143,13 @@ export default class ChampionDetail {
         const detail = document.createElement('div');
         detail.classList.add('detail');
 
+        const divImage = document.createElement('div');
+        divImage.classList.add("image")
+        detail.appendChild(divImage);
+
         const imgCarousel = document.createElement('div');
         imgCarousel.classList.add('img-carousel');
-        detail.appendChild(imgCarousel);
+        divImage.appendChild(imgCarousel);
 
         const img = document.createElement('img');
         img.classList.add('detail-image');
@@ -184,31 +189,71 @@ export default class ChampionDetail {
             skinSelect.selectedIndex = this.currentSkin;
         };
 
+        const divInfoBase = document.createElement('div');
+        divInfoBase.classList.add("info-base")
+        detail.appendChild(divInfoBase);
+
+        const divSpell = document.createElement('div');
+        divSpell.classList.add("spell")
+        detail.appendChild(divSpell);
+
+        const imagePassive = document.createElement('img');
+        imagePassive.src = await Provider.getPassiveImageBase(this.passive.image);
+
+        const ulPassive = document.createElement('ul');
+        ulPassive.innerHTML = `
+            <li> ${this.passive.name}}</li>
+            <li> Description: ${this.passive.description}</li>
+        `;
+
+        divSpell.appendChild(imagePassive);
+        divSpell.appendChild(ulPassive);
+
+        this.spells.forEach(async spell => {
+            const spellDiv = document.createElement('div');
+            const imageSpell = document.createElement('img');
+            imageSpell.src = await Provider.getSpellImageBase(spell.image);
+            spellDiv.appendChild(imageSpell);
+            const ulSpell = document.createElement('ul');
+            ulSpell.innerHTML = `
+            <li> ${spell.name}}</li>
+            <li> Description: ${spell.description}</li>
+            <li> Cooldown: ${spell.cooldown}</li>
+        `;
+
+        spellDiv.appendChild(ulSpell);
+        divSpell.appendChild(spellDiv);
+        });
+
         const h2 = document.createElement('h2');
         h2.textContent = this.name;
         h2.style = 'margin: 0px; text-align: center;';
-        detail.appendChild(h2);
+        divInfoBase.appendChild(h2);
 
         const h3 = document.createElement('h3');
         h3.textContent = this.title;
         h3.style = 'margin: 0px; text-align: center;';
-        detail.appendChild(h3);
+        divInfoBase.appendChild(h3);
 
         const p = document.createElement('p');
         p.textContent = this.blurb;
-        detail.appendChild(p);
+        divInfoBase.appendChild(p);
 
         const h4 = document.createElement('h4');
         h4.textContent = 'Tags: ' + this.tags.join(', ');
-        detail.appendChild(h4);
+        divInfoBase.appendChild(h4);
 
         const h5 = document.createElement('h5');
         h5.textContent = 'Resource: ' + this.partype;
-        detail.appendChild(h5);
+        divInfoBase.appendChild(h5);
 
+        const divStat = document.createElement('div');
+        divStat.classList.add("stats")
+        detail.appendChild(divStat);
+        
         const h6 = document.createElement('h6');
         h6.textContent = 'Stats:';
-        detail.appendChild(h6);
+        divStat.appendChild(h6);
 
         const ul = document.createElement('ul');
         ul.innerHTML = `
@@ -234,7 +279,7 @@ export default class ChampionDetail {
             <li>Attack speed per level: ${this.stats.attackspeedperlevel}</li>
             <li>Attack speed: ${this.stats.attackspeed}</li>
         `;
-        detail.appendChild(ul);
+        divStat.appendChild(ul);
         return detail;
     }
 }
