@@ -189,6 +189,10 @@ export default class ChampionDetail {
             skinSelect.selectedIndex = this.currentSkin;
         };
 
+        const divInfoBase = document.createElement('div');
+        divInfoBase.classList.add("info-base")
+        detail.appendChild(divInfoBase);
+
         const divSpell = document.createElement('div');
         divSpell.classList.add("spell")
         detail.appendChild(divSpell);
@@ -220,10 +224,6 @@ export default class ChampionDetail {
         spellDiv.appendChild(ulSpell);
         divSpell.appendChild(spellDiv);
         });
-
-        const divInfoBase = document.createElement('div');
-        divInfoBase.classList.add("info-base")
-        detail.appendChild(divInfoBase);
 
         const h2 = document.createElement('h2');
         h2.textContent = this.name;
