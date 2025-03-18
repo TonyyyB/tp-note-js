@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
             displayChampions();
         } else if (view === "detail") {
             loadCharacterDetails(arg);
-        } else if (view === "favoris") {
+        } else if (view === "favori") {
             displayFavorites();
         }
     }
@@ -24,13 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function displayFavorites() {
-        const champions = await Provider.getFavorites();
-        champions = Provider.fetchChampions();
-        const container = document.getElementById("favorites-container");
-        container.innerHTML = "";
-        champions.forEach(async champion => {
-            container.appendChild(await champion.renderDetail());
-        });
+        const championsId = await Provider.getFavorites();
+        const containerFav = document.getElementById("favorites-container");
+        containerFav.innerHTML = "";
+        championsId.forEach(async championId => {
+            let champion = await Provider.fetchChampion(championId.id);
+            containerFav.appendChild(await champion.renderCardFav());
+        })
     }
 
     async function displayChampions() {
@@ -40,6 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
         champions.forEach(async champion => {
             listContainer.appendChild(await champion.renderCard());
         });
+        const boutton = document.getElementById("favoris");
+        boutton.onclick = () => {
+            window.location.hash = `favori/`;
+        }
     }
 
     async function loadView(view, arg) {
