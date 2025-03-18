@@ -12,11 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (view === "detail") {
             loadCharacterDetails(arg);
         } else if (view === "favoris") {
-            Provider.displayFavorites();
+            displayFavorites();
         }
     }
 
     async function loadCharacterDetails(arg) {
+        const champion = await Provider.fetchChampion(arg);
+        const container = document.getElementById("character-details");
+        container.innerHTML = "";
+        container.appendChild(await champion.renderDetail());
+    }
+
+    async function displayFavorites() {
         const champion = await Provider.fetchChampion(arg);
         const container = document.getElementById("character-details");
         container.innerHTML = "";

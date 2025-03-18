@@ -96,13 +96,12 @@ export default class Provider {
             favorites.push({
                 id: champion.id,
                 name: champion.name,
-                title: champion.title,
-                image: champion.image // stocke l'url de l'image
+                title: champion.title
             });
             localStorage.setItem('favorites', JSON.stringify(favorites));
-            alert(`${champion.name} ajouté aux favoris !`);
+            alert(`${champion.id} ajouté aux favoris !`);
         } else {
-            alert(`${champion.name} est déjà dans vos favoris.`);
+            alert(`${champion.id} est déjà dans vos favoris.`);
         }
     }
 
