@@ -87,4 +87,48 @@ export default class Provider {
             return [];
         }
     }
+
+    static async addToFavorites(champion) {
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        // Vérifie s'il est déjà en favori
+        if (!favorites.find(fav => fav.id === champion.id)) {
+            favorites.push({
+                id: champion.id,
+                name: champion.name,
+                title: champion.title,
+                image: champion.image // stocke l'url de l'image
+            });
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            alert(`${champion.name} ajouté aux favoris !`);
+        } else {
+            alert(`${champion.name} est déjà dans vos favoris.`);
+        }
+    }
+
+    static async getFavorites() {
+        return JSON.parse(localStorage.getItem('favorites')) || [];
+    }
+
+    static async displayFavorites() {
+            const favorites = getFavorites();
+            const container = document.getElementById('favorites-container');
+            container.innerHTML = '';
+
+            if (favorites.length === 0) {
+                container.innerHTML = '<p>Aucun favori pour l\'instant.</p>';
+                return;
+            }
+
+            favorites.forEach(fav => {
+                const favDiv = document.createElement('div');
+                favDiv.innerHTML = `
+                    <h3>${fav.name}</h3>
+                    <p>${fav.title}</p>
+                    <img src="${fav.image}" alt="${fav.name}" style="width:100px">
+                `;
+                container.appendChild(favDiv);
+            });
+        }
+
 }

@@ -280,6 +280,11 @@ export default class ChampionDetail {
             <li>Attack speed: ${this.stats.attackspeed}</li>
         `;
         divStat.appendChild(ul);
-        return detail;
+
+        const addFavoriteButton = document.getElementById('add-favorite');
+        addFavoriteButton.onclick = () => {
+            Provider.addToFavorites(self); // championDetail = instance de ChampionDetail
+        };
+        return detail;  
     }
 }

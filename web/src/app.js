@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
             displayChampions();
         } else if (view === "detail") {
             loadCharacterDetails(arg);
-        } else if (view === "favorites") {
-            displayFavorites();
+        } else if (view === "favoris") {
+            Provider.displayFavorites();
         }
     }
 
