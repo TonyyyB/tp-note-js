@@ -106,4 +106,14 @@ export default class Provider {
     static async getFavorites() {
         return JSON.parse(localStorage.getItem('favorites')) || [];
     }
+
+    static async  removeFavori(championIdentifiant){
+        let championsId = await Provider.getFavorites();
+        console.log(championsId);
+        championsId.forEach(async championId => {
+            if(championId.id === championIdentifiant){
+                localStorage.removeItem("favorites")[championIdentifiant];
+            }
+        })
+    }
 }
