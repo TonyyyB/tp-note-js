@@ -90,8 +90,6 @@ export default class Provider {
 
     static async addToFavorites(champion) {
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-        // Vérifie s'il est déjà en favori
         if (!favorites.find(fav => fav.id === champion.id)) {
             favorites.push({
                 id: champion.id,
@@ -108,26 +106,4 @@ export default class Provider {
     static async getFavorites() {
         return JSON.parse(localStorage.getItem('favorites')) || [];
     }
-
-    static async displayFavorites() {
-            const favorites = getFavorites();
-            const container = document.getElementById('favorites-container');
-            container.innerHTML = '';
-
-            if (favorites.length === 0) {
-                container.innerHTML = '<p>Aucun favori pour l\'instant.</p>';
-                return;
-            }
-
-            favorites.forEach(fav => {
-                const favDiv = document.createElement('div');
-                favDiv.innerHTML = `
-                    <h3>${fav.name}</h3>
-                    <p>${fav.title}</p>
-                    <img src="${fav.image}" alt="${fav.name}" style="width:100px">
-                `;
-                container.appendChild(favDiv);
-            });
-        }
-
 }

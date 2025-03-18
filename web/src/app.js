@@ -24,10 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function displayFavorites() {
-        const champion = await Provider.fetchChampion(arg);
-        const container = document.getElementById("character-details");
+        const champions = await Provider.getFavorites();
+        champions = Provider.fetchChampions();
+        const container = document.getElementById("favorites-container");
         container.innerHTML = "";
-        container.appendChild(await champion.renderDetail());
+        champions.forEach(async champion => {
+            container.appendChild(await champion.renderDetail());
+        });
     }
 
     async function displayChampions() {

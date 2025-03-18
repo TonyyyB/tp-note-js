@@ -283,7 +283,7 @@ export default class ChampionDetail {
 
         const addFavoriteButton = document.getElementById('add-favorite');
         addFavoriteButton.onclick = () => {
-            Provider.addToFavorites(self); // championDetail = instance de ChampionDetail
+            Provider.addToFavorites(this); // championDetail = instance de ChampionDetail
         };
         return detail;  
     }
