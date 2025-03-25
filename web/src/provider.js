@@ -89,9 +89,8 @@ export default class Provider {
     }
 
     static async addToFavorites(champion) {
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-        // Vérifie s'il est déjà en favori
+        let favorites = await Provider.getFavorites();
+        console.log(favorites);
         if (!favorites.find(fav => fav.id === champion.id)) {
             favorites.push({
                 id: champion.id,
@@ -109,25 +108,14 @@ export default class Provider {
         return JSON.parse(localStorage.getItem('favorites')) || [];
     }
 
-    static async displayFavorites() {
-            const favorites = getFavorites();
-            const container = document.getElementById('favorites-container');
-            container.innerHTML = '';
-
-            if (favorites.length === 0) {
-                container.innerHTML = '<p>Aucun favori pour l\'instant.</p>';
+    static async removeFavori(championIdentifiant) {
+        let favorites = await Provider.getFavorites();
+        favorites.forEach((item, index, object) => {
+            if (item.id === championIdentifiant) {
+                object.splice(index, 1);
                 return;
             }
-
-            favorites.forEach(fav => {
-                const favDiv = document.createElement('div');
-                favDiv.innerHTML = `
-                    <h3>${fav.name}</h3>
-                    <p>${fav.title}</p>
-                    <img src="${fav.image}" alt="${fav.name}" style="width:100px">
-                `;
-                container.appendChild(favDiv);
-            });
-        }
-
+        });
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
 }

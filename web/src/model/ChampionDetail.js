@@ -283,8 +283,28 @@ export default class ChampionDetail {
 
         const addFavoriteButton = document.getElementById('add-favorite');
         addFavoriteButton.onclick = () => {
-            Provider.addToFavorites(self); // championDetail = instance de ChampionDetail
+            Provider.addToFavorites(this); // championDetail = instance de ChampionDetail
         };
         return detail;  
     }
+
+    async renderCardFav() {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.style = "cursor: pointer;";
+            card.onclick = () => {
+                window.location.hash = `detail/${this.id}`;
+            };
+    
+            const img = document.createElement('img');
+            img.src = await Provider.getChampionSquareImageBase(this.image);
+            img.alt = this.name;
+            card.appendChild(img);
+    
+            const h2 = document.createElement('h2');
+            h2.textContent = this.name;
+            h2.style = 'margin: 0px; text-align: center;';
+            card.appendChild(h2);
+            return card;
+        }
 }

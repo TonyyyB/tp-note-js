@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
             displayChampions();
         } else if (view === "detail") {
             loadCharacterDetails(arg);
-        } else if (view === "favoris") {
+        } else if (view === "favori") {
             displayFavorites();
         }
     }
@@ -24,11 +24,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function displayFavorites() {
-        const champion = await Provider.fetchChampion(arg);
-        const container = document.getElementById("character-details");
-        container.innerHTML = "";
-        container.appendChild(await champion.renderDetail());
+        const championsId = await Provider.getFavorites();
+        const containerFav = document.getElementById("favorites-container");
+        containerFav.style = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));';
+        containerFav.innerHTML = "";
+        championsId.forEach(async championId => {
+            let champion = await Provider.fetchChampion(championId.id);
+            let buttonRemove = document.createElement("button");
+            buttonRemove.textContent = "Supprimer";
+            buttonRemove.onclick = () => {
+                Provider.removeFavori(championId.id);
+                handleNavigation();
+            }
+            containerFav.appendChild(await champion.renderCardFav());
+            containerFav.appendChild(buttonRemove);
+        })
     }
+
 
     async function displayChampions() {
         const champions = await Provider.fetchChampions();
@@ -37,6 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
         champions.forEach(async champion => {
             listContainer.appendChild(await champion.renderCard());
         });
+        const boutton = document.getElementById("favoris");
+        boutton.onclick = () => {
+            window.location.hash = `favori/`;
+        }
     }
 
     async function loadView(view, arg) {
