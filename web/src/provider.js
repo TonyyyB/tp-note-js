@@ -26,12 +26,17 @@ export default class Provider {
             return [];
         }
     }
+
     static async fetchItems() {
         try {
             const links = await Provider.fetchLinks();
             const response = await fetch(links.items);
             const items = await response.json();
-            return Object.values(items.data).map(item => new Item(item));
+            var res = {};
+            Object.entries(items.data).forEach((data) => {
+                res[data[0]] = new Item(data[0], data[1])
+            });
+            return res;
         } catch (error) {
             console.error("fetchItems:", error);
             return [];

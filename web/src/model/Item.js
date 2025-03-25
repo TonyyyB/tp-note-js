@@ -1,8 +1,9 @@
 import Tag from './Tag.js';
 import Provider from '../provider.js';
 export default class Item {
-    constructor(json) {
-        this.name = json.name;
+    constructor(id, json) {
+        this.id = id;
+        this.name = json.name.startsWith("<rarityLegendary>") ? json.name.split("<br>")[0].replace("<rarityLegendary>", "").replace("<rarityLegendary/>", "") : json.name;
         this.description = json.description;
         this.colloq = json.colloq;
         this.plaintext = json.plaintext;
@@ -16,7 +17,7 @@ export default class Item {
         console.log(`Description: ${this.plaintext}`);
         console.log(`Prix en Gold: ${this.gold}`);
         console.log(`Resource: ${this.partype}`);
-        
+
     }
 
     async renderCard() {
@@ -39,5 +40,15 @@ export default class Item {
         h2.style = 'margin: 0px; text-align: center;';
         card.appendChild(h2);
         return card;
+    }
+    async renderDetail() {
+        const detail = document.createElement('div');
+        detail.classList.add('detail');
+        detail.innerHTML = this.name;
+        return detail;
+    }
+
+    toString() {
+        return this.name;
     }
 }

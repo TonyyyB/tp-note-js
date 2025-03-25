@@ -1,6 +1,7 @@
 import Provider from "./provider.js";
 document.addEventListener("DOMContentLoaded", () => {
     let caroussel;
+    let items;
     function handleNavigation() {
         const hash = window.location.hash.substring(1).split("/")[0] || "listing";
         const arg = window.location.hash.substring(1).split("/")[1];
@@ -21,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         else if (view === "items") {
             displayItems();
+        } else if (view === "item") {
+            displayItemDetail(arg);
         }
     }
 
@@ -67,12 +70,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function displayItems() {
-        const items = await Provider.fetchItems();
+        if (!items) items = await Provider.fetchItems();
         const listContainerItem = document.getElementById("item-list");
         listContainerItem.style = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));';
-        items.forEach(async item => {
+        const sorted = Object.values(items).sort((a, b) => a.name.localeCompare(b.name));
+
+        for (const item of sorted) {
+            console.log(item.toString());
             listContainerItem.appendChild(await item.renderCard());
-        });
+        }
+    }
+
+    async function displayItemDetail(arg) {
+        if (!items) items = await Provider.fetchItems();
+        const item = items[arg];
+        const container = document.getElementById("item-details");
+        container.innerHTML = "";
+        container.appendChild(await item.renderDetail());
     }
 
     async function loadView(view, arg) {
