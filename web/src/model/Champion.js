@@ -33,6 +33,7 @@ export default class Champion {
         const img = document.createElement('img');
         img.src = await Provider.getChampionSquareImageBase(this.image);
         img.alt = this.name;
+        img.loading = 'lazy';
         card.appendChild(img);
 
         const h2 = document.createElement('h2');

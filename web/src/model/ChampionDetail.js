@@ -190,6 +190,7 @@ export default class ChampionDetail {
 
         const imagePassive = document.createElement('img');
         imagePassive.src = await Provider.getPassiveImageBase(this.passive.image);
+        imagePassive.loading = 'lazy';
 
         const ulPassive = document.createElement('ul');
         ulPassive.innerHTML = `
@@ -204,6 +205,7 @@ export default class ChampionDetail {
             const spellDiv = document.createElement('div');
             const imageSpell = document.createElement('img');
             imageSpell.src = await Provider.getSpellImageBase(spell.image);
+            imageSpell.loading = 'lazy';
             spellDiv.appendChild(imageSpell);
             const ulSpell = document.createElement('ul');
             ulSpell.innerHTML = `
@@ -302,6 +304,7 @@ export default class ChampionDetail {
         const img = document.createElement('img');
         img.src = await Provider.getChampionSquareImageBase(this.image);
         img.alt = this.name;
+        img.loading = 'lazy';
         card.appendChild(img);
 
         const h2 = document.createElement('h2');
