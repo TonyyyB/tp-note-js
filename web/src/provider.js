@@ -1,6 +1,7 @@
 import CONFIG from "./config.js";
 import Champion from "./model/Champion.js";
 import ChampionDetail from "./model/ChampionDetail.js";
+import Item from "./model/Item.js";
 
 export default class Provider {
     static async fetchLinks() {
@@ -22,6 +23,17 @@ export default class Provider {
             return Object.values(champions.data).map(champion => new Champion(champion));
         } catch (error) {
             console.error("fetchChampions:", error);
+            return [];
+        }
+    }
+    static async fetchItems() {
+        try {
+            const links = await Provider.fetchLinks();
+            const response = await fetch(links.items);
+            const items = await response.json();
+            return Object.values(items.data).map(item => new Item(item));
+        } catch (error) {
+            console.error("fetchItems:", error);
             return [];
         }
     }

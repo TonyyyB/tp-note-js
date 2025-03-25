@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (view === "favori") {
             displayFavorites();
         }
+        else if (view === "items") {
+            displayItems();
+        }
     }
 
     async function loadCharacterDetails(arg) {
@@ -61,6 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
         boutton.onclick = () => {
             window.location.hash = `favori/`;
         }
+    }
+
+    async function displayItems() {
+        const items = await Provider.fetchItems();
+        const listContainerItem = document.getElementById("item-list");
+        listContainerItem.style = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));';
+        items.forEach(async item => {
+            listContainerItem.appendChild(await item.renderCard());
+        });
     }
 
     async function loadView(view, arg) {

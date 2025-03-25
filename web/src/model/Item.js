@@ -5,26 +5,18 @@ export default class Item {
         this.name = json.name;
         this.description = json.description;
         this.colloq = json.colloq;
-        this.into = [];
         this.plaintext = json.plaintext;
         this.image = json.image.full;
         this.gold = json.gold;
         this.stats = json.stats;
-        this.tags = [];
-
-        json.tags.forEach(tagName => {
-            const tag = Tag.getTag(tagName);
-            tag.addChampion(this);
-            this.tags.push(tag);
-        });
     }
 
     displayInfo() {
-        console.log(`${this.name}, ${this.title}`);
-        console.log(`Tags: ${this.tags.map(tag => tag.name).join(', ')}`);
-        console.log(`HP: ${this.stats.hp}, Attack Damage: ${this.stats.attackdamage}`);
+        console.log(`${this.name},`);
+        console.log(`Description: ${this.plaintext}`);
+        console.log(`Prix en Gold: ${this.gold}`);
         console.log(`Resource: ${this.partype}`);
-        console.log(`Description: ${this.blurb}`);
+        
     }
 
     async renderCard() {
@@ -36,7 +28,7 @@ export default class Item {
         };
 
         const img = document.createElement('img');
-        img.src = await Provider.getChampionSquareImageBase(this.image);
+        img.src = await Provider.getItemImageBase(this.image);
         img.alt = this.name;
         card.appendChild(img);
 
