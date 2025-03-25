@@ -30,6 +30,8 @@ export default class Item {
         const img = document.createElement('img');
         img.src = await Provider.getItemImageBase(this.image);
         img.alt = this.name;
+        img.height = 64;
+        img.width = 64;
         card.appendChild(img);
 
         const h2 = document.createElement('h2');
