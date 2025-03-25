@@ -110,7 +110,6 @@ export default class ChampionDetail {
     }
 
     static fromJSON(jsonData) {
-        console.log(jsonData);
         return new ChampionDetail(
             jsonData.id,
             jsonData.key,
@@ -161,33 +160,25 @@ export default class ChampionDetail {
         prev.innerHTML = "<";
         imgCarousel.appendChild(prev);
 
-        const skinSelect = document.createElement('select');
-        skinSelect.onchange = async () => {
-            this.currentSkin = skinSelect.selectedIndex;
+        this.skinSelect = document.createElement('select');
+        this.skinSelect.onchange = async () => {
+            this.currentSkin = this.skinSelect.selectedIndex;
             img.src = await Provider.getChampionLoadingImageBase(this.id, this.skins[this.currentSkin].num);
         }
         this.skins.forEach(skin => {
             const option = document.createElement('option');
             option.textContent = skin.name == "default" ? this.name : skin.name;
-            skinSelect.appendChild(option);
+            this.skinSelect.appendChild(option);
         });
-        imgCarousel.appendChild(skinSelect);
+        imgCarousel.appendChild(this.skinSelect);
 
         const next = document.createElement('button');
         next.innerHTML = ">";
         imgCarousel.appendChild(next);
 
-        prev.onclick = async () => {
-            this.currentSkin = (this.currentSkin + this.skins.length - 1) % this.skins.length;
-            img.src = await Provider.getChampionLoadingImageBase(this.id, this.skins[this.currentSkin].num);
-            skinSelect.selectedIndex = this.currentSkin;
-        };
+        prev.onclick = () => this.prevSkin();
 
-        next.onclick = async () => {
-            this.currentSkin = (this.currentSkin + 1) % this.skins.length;
-            img.src = await Provider.getChampionLoadingImageBase(this.id, this.skins[this.currentSkin].num);
-            skinSelect.selectedIndex = this.currentSkin;
-        };
+        next.onclick = () => this.nextSkin();
 
         const divInfoBase = document.createElement('div');
         divInfoBase.classList.add("info-base")
@@ -221,8 +212,8 @@ export default class ChampionDetail {
             <li> Cooldown: ${spell.cooldown}</li>
         `;
 
-        spellDiv.appendChild(ulSpell);
-        divSpell.appendChild(spellDiv);
+            spellDiv.appendChild(ulSpell);
+            divSpell.appendChild(spellDiv);
         });
 
         const h2 = document.createElement('h2');
@@ -250,7 +241,7 @@ export default class ChampionDetail {
         const divStat = document.createElement('div');
         divStat.classList.add("stats")
         detail.appendChild(divStat);
-        
+
         const h6 = document.createElement('h6');
         h6.textContent = 'Stats:';
         divStat.appendChild(h6);
@@ -285,26 +276,38 @@ export default class ChampionDetail {
         addFavoriteButton.onclick = () => {
             Provider.addToFavorites(this); // championDetail = instance de ChampionDetail
         };
-        return detail;  
+        return detail;
+    }
+
+    nextSkin() {
+        this.currentSkin = (this.currentSkin + 1) % this.skins.length;
+        this.skinSelect.selectedIndex = this.currentSkin;
+        this.skinSelect.onchange();
+    }
+
+    prevSkin() {
+        this.currentSkin = (this.currentSkin + this.skins.length - 1) % this.skins.length;
+        this.skinSelect.selectedIndex = this.currentSkin;
+        this.skinSelect.onchange();
     }
 
     async renderCardFav() {
-            const card = document.createElement('div');
-            card.classList.add('card');
-            card.style = "cursor: pointer;";
-            card.onclick = () => {
-                window.location.hash = `detail/${this.id}`;
-            };
-    
-            const img = document.createElement('img');
-            img.src = await Provider.getChampionSquareImageBase(this.image);
-            img.alt = this.name;
-            card.appendChild(img);
-    
-            const h2 = document.createElement('h2');
-            h2.textContent = this.name;
-            h2.style = 'margin: 0px; text-align: center;';
-            card.appendChild(h2);
-            return card;
-        }
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.style = "cursor: pointer;";
+        card.onclick = () => {
+            window.location.hash = `detail/${this.id}`;
+        };
+
+        const img = document.createElement('img');
+        img.src = await Provider.getChampionSquareImageBase(this.image);
+        img.alt = this.name;
+        card.appendChild(img);
+
+        const h2 = document.createElement('h2');
+        h2.textContent = this.name;
+        h2.style = 'margin: 0px; text-align: center;';
+        card.appendChild(h2);
+        return card;
+    }
 }

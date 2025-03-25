@@ -1,5 +1,6 @@
 import Provider from "./provider.js";
 document.addEventListener("DOMContentLoaded", () => {
+    let caroussel;
     function handleNavigation() {
         const hash = window.location.hash.substring(1).split("/")[0] || "listing";
         const arg = window.location.hash.substring(1).split("/")[1];
@@ -7,6 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleViewLogic(view, arg) {
+        if (caroussel) {
+            clearInterval(caroussel);
+            caroussel = undefined;
+        }
         if (view === "listing") {
             displayChampions();
         } else if (view === "detail") {
@@ -21,6 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("character-details");
         container.innerHTML = "";
         container.appendChild(await champion.renderDetail());
+        caroussel = setInterval(() => {
+            champion.nextSkin();
+        }, 5000);
     }
 
     async function displayFavorites() {
