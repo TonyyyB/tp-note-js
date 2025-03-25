@@ -75,10 +75,10 @@ export default class Provider {
         }
     }
 
-    static async getItemImageBase(name) {
+    static async getItemImageBase(image) {
         try {
             const links = await Provider.fetchLinks();
-            return links.itemImageBase + name;
+            return links.itemImageBase + image;
         } catch (error) {
             console.error("getItemImageBase:", error);
             return [];

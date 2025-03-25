@@ -74,9 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const listContainerItem = document.getElementById("item-list");
         listContainerItem.style = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));';
         const sorted = Object.values(items).sort((a, b) => a.name.localeCompare(b.name));
-
         for (const item of sorted) {
-            console.log(item.toString());
             listContainerItem.appendChild(await item.renderCard());
         }
     }
