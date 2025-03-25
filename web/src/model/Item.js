@@ -19,7 +19,6 @@ export default class Item {
     }
 
     async renderCard() {
-        console.log(this.image);
         const card = document.createElement('div');
         card.classList.add('card');
         card.style = "cursor: pointer;";
@@ -63,7 +62,7 @@ export default class Item {
         h2.style = 'margin: 0px; text-align: center;';
         divInfoBase.appendChild(h2);
 
-        divInfoBase.appendChild(this.parseDescription());
+        if (this.description) divInfoBase.appendChild(this.parseDescription());
 
         return detail;
     }
@@ -100,8 +99,22 @@ export default class Item {
             "stats": "p",
             "attention": "b",
             "passive": "p",
+            "active": "b",
             "healing": "b",
-            "onhit": "i"
+            "onhit": "i",
+            "magicdamage": "b",
+            "scalelevel": "i",
+            "speed": "b",
+            "scalemana": "b",
+            "keyword": "b",
+            "status": "b",
+            "rules": "i",
+            "scalehealth": "b",
+            "physicaldamage": "b",
+            "raritylegendary": "b",
+            "keywordstealth": "b",
+            "shield": "b",
+            "buffedstat": "i"
         });
         console.log(parsed.body.firstChild);
         return parsed.body.firstChild;
