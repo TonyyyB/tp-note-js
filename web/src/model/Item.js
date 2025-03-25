@@ -24,7 +24,7 @@ export default class Item {
         card.classList.add('card');
         card.style = "cursor: pointer;";
         card.onclick = () => {
-            window.location.hash = `detail/${this.id}`;
+            window.location.hash = `item/${this.id}`;
         };
 
         const img = document.createElement('img');
