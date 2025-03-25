@@ -31,15 +31,16 @@ document.addEventListener("DOMContentLoaded", () => {
         championsId.forEach(async championId => {
             let champion = await Provider.fetchChampion(championId.id);
             let buttonRemove = document.createElement("button");
-
+            buttonRemove.textContent = "Supprimer";
             buttonRemove.onclick = () => {
-
+                Provider.removeFavori(championId.id);
+                handleNavigation();
             }
             containerFav.appendChild(await champion.renderCardFav());
             containerFav.appendChild(buttonRemove);
         })
     }
-    
+
 
     async function displayChampions() {
         const champions = await Provider.fetchChampions();

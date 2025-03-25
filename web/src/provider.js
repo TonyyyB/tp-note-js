@@ -89,7 +89,8 @@ export default class Provider {
     }
 
     static async addToFavorites(champion) {
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let favorites = await Provider.getFavorites();
+        console.log(favorites);
         if (!favorites.find(fav => fav.id === champion.id)) {
             favorites.push({
                 id: champion.id,
@@ -107,13 +108,14 @@ export default class Provider {
         return JSON.parse(localStorage.getItem('favorites')) || [];
     }
 
-    static async  removeFavori(championIdentifiant){
-        let championsId = await Provider.getFavorites();
-        console.log(championsId);
-        championsId.forEach(async championId => {
-            if(championId.id === championIdentifiant){
-                localStorage.removeItem("favorites")[championIdentifiant];
+    static async removeFavori(championIdentifiant) {
+        let favorites = await Provider.getFavorites();
+        favorites.forEach((item, index, object) => {
+            if (item.id === championIdentifiant) {
+                object.splice(index, 1);
+                return;
             }
-        })
+        });
+        localStorage.setItem('favorites', JSON.stringify(favorites));
     }
 }
