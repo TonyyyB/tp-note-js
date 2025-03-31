@@ -60,8 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const champions = await Provider.fetchChampions();
         const listContainer = document.getElementById("character-list");
         listContainer.style = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));';
-
-
         async function renderList(filteredChampions) {
             listContainer.innerHTML = "";
             for (const champion of filteredChampions) {
@@ -70,8 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        await renderList(champions);
 
+        await renderList(champions);
 
         const searchInput = document.getElementById("search");
         searchInput.addEventListener("input", async (e) => {
@@ -79,13 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const filtered = champions.filter(champ => champ.name.toLowerCase().includes(searchTerm));
             await renderList(filtered);
         });
-
-
         const boutton = document.getElementById("favoris");
         boutton.onclick = () => {
             window.location.hash = `favori/`;
         }
     }
+    
 
 
     async function displayItems() {
