@@ -1,4 +1,5 @@
 import Provider from "../provider.js";
+
 class Skin {
     constructor(id, num, name, chromas) {
         this.id = id;
@@ -39,6 +40,16 @@ class Stats {
         this.attackdamageperlevel = attackdamageperlevel;
         this.attackspeedperlevel = attackspeedperlevel;
         this.attackspeed = attackspeed;
+    }
+
+    clone() {
+        return new Stats(
+            this.hp, this.hpperlevel, this.mp, this.mpperlevel, this.movespeed,
+            this.armor, this.armorperlevel, this.spellblock, this.spellblockperlevel,
+            this.attackrange, this.hpregen, this.hpregenperlevel, this.mpregen, this.mpregenperlevel,
+            this.crit, this.critperlevel, this.attackdamage, this.attackdamageperlevel,
+            this.attackspeedperlevel, this.attackspeed
+        );
     }
 }
 
@@ -96,9 +107,14 @@ export default class ChampionDetail {
             spell.cooldownBurn, spell.cost, spell.costBurn, spell.costType, spell.range, spell.rangeBurn,
             spell.resource, spell.image
         ));
-        console.log(passive);
         this.passive = new Passive(passive.name, passive.description, passive.image);
         this.currentSkin = 0;
+
+
+        this.equippedItems = [null, null, null, null, null];
+        this.baseStats = this.stats.clone();
+        this.modifiedStats = this.stats.clone();
+
         this.loadSkinsImages();
     }
 
@@ -138,12 +154,94 @@ export default class ChampionDetail {
         console.log(`Description: ${this.blurb}`);
     }
 
+
+    equipItem(item, slot) {
+        if (slot < 0 || slot >= 5) {
+            console.error("Emplacement d'objet invalide");
+            return false;
+        }
+
+        if (this.equippedItems[slot]) {
+            this.unequipItem(slot);
+        }
+
+        this.equippedItems[slot] = item;
+
+        this.updateStats();
+
+        return true;
+    }
+
+
+    unequipItem(slot) {
+        if (slot < 0 || slot >= 5 || !this.equippedItems[slot]) {
+            return false;
+        }
+
+        this.equippedItems[slot] = null;
+
+        this.updateStats();
+
+        return true;
+    }
+
+    updateStats() {
+        this.modifiedStats = this.baseStats.clone();
+        for (const item of this.equippedItems) {
+            if (item) {
+                this.applyItemStats(item);
+            }
+        }
+    }
+
+    applyItemStats(item) {
+
+        if (!item.stats) return;
+
+        for (const [statKey, statValue] of Object.entries(item.stats)) {
+
+            if (statValue === null || statValue === undefined) continue;
+
+            const championStatKey = this.mapItemStatToChampionStat(statKey);
+
+            if (championStatKey && this.modifiedStats[championStatKey] !== undefined) {
+                this.modifiedStats[championStatKey] += parseFloat(statValue);
+            }
+        }
+    }
+
+
+    mapItemStatToChampionStat(itemStatKey) {
+        const statMap = {
+            'FlatHPPoolMod': 'hp',
+            'rFlatHPModPerLevel': 'hpperlevel',
+            'FlatMPPoolMod': 'mp',
+            'rFlatMPModPerLevel': 'mpperlevel',
+            'PercentMovementSpeedMod': 'movespeed',
+            'FlatMovementSpeedMod': 'movespeed',
+            'FlatArmorMod': 'armor',
+            'rFlatArmorModPerLevel': 'armorperlevel',
+            'FlatSpellBlockMod': 'spellblock',
+            'rFlatSpellBlockModPerLevel': 'spellblockperlevel',
+            'FlatPhysicalDamageMod': 'attackdamage',
+            'rFlatPhysicalDamageModPerLevel': 'attackdamageperlevel',
+            'PercentAttackSpeedMod': 'attackspeed',
+            'FlatCritChanceMod': 'crit',
+            'FlatHPRegenMod': 'hpregen',
+            'rFlatHPRegenModPerLevel': 'hpregenperlevel',
+            'FlatMPRegenMod': 'mpregen',
+            'rFlatMPRegenModPerLevel': 'mpregenperlevel'
+        };
+
+        return statMap[itemStatKey] || null;
+    }
+
     async renderDetail() {
         const detail = document.createElement('div');
         detail.classList.add('detail');
 
         const divImage = document.createElement('div');
-        divImage.classList.add("image")
+        divImage.classList.add("image");
         detail.appendChild(divImage);
 
         const imgCarousel = document.createElement('div');
@@ -164,7 +262,7 @@ export default class ChampionDetail {
         this.skinSelect.onchange = async () => {
             this.currentSkin = this.skinSelect.selectedIndex;
             img.src = await Provider.getChampionLoadingImageBase(this.id, this.skins[this.currentSkin].num);
-        }
+        };
         this.skins.forEach(skin => {
             const option = document.createElement('option');
             option.textContent = skin.name == "default" ? this.name : skin.name;
@@ -177,15 +275,14 @@ export default class ChampionDetail {
         imgCarousel.appendChild(next);
 
         prev.onclick = () => this.prevSkin();
-
         next.onclick = () => this.nextSkin();
 
         const divInfoBase = document.createElement('div');
-        divInfoBase.classList.add("info-base")
+        divInfoBase.classList.add("info-base");
         detail.appendChild(divInfoBase);
 
         const divSpell = document.createElement('div');
-        divSpell.classList.add("spell")
+        divSpell.classList.add("spell");
         detail.appendChild(divSpell);
 
         const imagePassive = document.createElement('img');
@@ -193,28 +290,28 @@ export default class ChampionDetail {
 
         const ulPassive = document.createElement('ul');
         ulPassive.innerHTML = `
-            <li> ${this.passive.name}}</li>
-            <li> Description: ${this.passive.description}</li>
+            <li>${this.passive.name}</li>
+            <li>Description: ${this.passive.description}</li>
         `;
 
         divSpell.appendChild(imagePassive);
         divSpell.appendChild(ulPassive);
 
-        this.spells.forEach(async spell => {
+        for (const spell of this.spells) {
             const spellDiv = document.createElement('div');
             const imageSpell = document.createElement('img');
             imageSpell.src = await Provider.getSpellImageBase(spell.image);
             spellDiv.appendChild(imageSpell);
             const ulSpell = document.createElement('ul');
             ulSpell.innerHTML = `
-            <li> ${spell.name}}</li>
-            <li> Description: ${spell.description}</li>
-            <li> Cooldown: ${spell.cooldown}</li>
-        `;
+                <li>${spell.name}</li>
+                <li>Description: ${spell.description}</li>
+                <li>Cooldown: ${spell.cooldown}</li>
+            `;
 
             spellDiv.appendChild(ulSpell);
             divSpell.appendChild(spellDiv);
-        });
+        }
 
         const h2 = document.createElement('h2');
         h2.textContent = this.name;
@@ -238,12 +335,13 @@ export default class ChampionDetail {
         h5.textContent = 'Resource: ' + this.partype;
         divInfoBase.appendChild(h5);
 
+
         const divStat = document.createElement('div');
-        divStat.classList.add("stats")
+        divStat.classList.add("stats");
         detail.appendChild(divStat);
 
         const h6 = document.createElement('h6');
-        h6.textContent = 'Stats:';
+        h6.textContent = 'Stats de base:';
         divStat.appendChild(h6);
 
         const ul = document.createElement('ul');
@@ -261,8 +359,7 @@ export default class ChampionDetail {
             <li>HP regen: ${this.stats.hpregen}</li>
             <li>HP regen per level: ${this.stats.hpregenperlevel}</li>
             <li>MP regen: ${this.stats.mpregen}</li>
-            <li>MP regen per level:
-            ${this.stats.mpregenperlevel}</li>
+            <li>MP regen per level: ${this.stats.mpregenperlevel}</li>
             <li>Crit: ${this.stats.crit}</li>
             <li>Crit per level: ${this.stats.critperlevel}</li>
             <li>Attack damage: ${this.stats.attackdamage}</li>
@@ -272,11 +369,278 @@ export default class ChampionDetail {
         `;
         divStat.appendChild(ul);
 
-        const addFavoriteButton = document.getElementById('add-favorite');
+        const divItems = document.createElement('div');
+        divItems.classList.add('items-equipment');
+        divItems.innerHTML = '<h6>Équipement:</h6>';
+        detail.appendChild(divItems);
+
+        const itemSlots = document.createElement('div');
+        itemSlots.classList.add('item-slots');
+        divItems.appendChild(itemSlots);
+
+        for (let i = 0; i < 5; i++) {
+            const slotDiv = document.createElement('div');
+            slotDiv.classList.add('item-slot');
+            slotDiv.setAttribute('data-slot', i);
+
+            if (this.equippedItems[i]) {
+                const img = document.createElement('img');
+                img.src = await Provider.getItemImageBase(this.equippedItems[i].image);
+                img.alt = this.equippedItems[i].name;
+                slotDiv.appendChild(img);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'X';
+                removeBtn.classList.add('remove-item');
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.unequipItem(i);
+                    this.renderItemSlots(itemSlots);
+                    this.renderModifiedStats(modifiedStatsDiv);
+                };
+                slotDiv.appendChild(removeBtn);
+            } else {
+                slotDiv.textContent = '+';
+                slotDiv.classList.add('empty-slot');
+            }
+
+
+            slotDiv.onclick = async () => {
+
+                const items = await Provider.fetchItems();
+                this.showItemSelectionModal(items, i, itemSlots, modifiedStatsDiv);
+            };
+
+            itemSlots.appendChild(slotDiv);
+        }
+
+
+        const modifiedStatsDiv = document.createElement('div');
+        modifiedStatsDiv.classList.add('modified-stats');
+        modifiedStatsDiv.id = 'modified-stats';
+        divItems.appendChild(modifiedStatsDiv);
+
+        this.renderModifiedStats(modifiedStatsDiv);
+
+
+        const addFavoriteButton = document.createElement('button');
+        addFavoriteButton.textContent = 'Ajouter aux favoris';
+        addFavoriteButton.id = 'add-favorite';
         addFavoriteButton.onclick = () => {
-            Provider.addToFavorites(this); // championDetail = instance de ChampionDetail
+            Provider.addToFavorites(this);
         };
+        detail.appendChild(addFavoriteButton);
+
         return detail;
+    }
+
+
+    showItemSelectionModal(items, slotIndex, itemSlotsElement, statsElement) {
+        const existingModal = document.querySelector('.items-modal');
+        if (existingModal) {
+            document.body.removeChild(existingModal);
+        }
+
+
+        const modal = document.createElement('div');
+        modal.classList.add('items-modal');
+
+
+        const modalTitle = document.createElement('h3');
+        modalTitle.textContent = 'Sélectionner un objet';
+        modal.appendChild(modalTitle);
+
+
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Fermer';
+        closeBtn.classList.add('modal-close-btn');
+        closeBtn.onclick = () => {
+            document.body.removeChild(modal);
+        };
+        modal.appendChild(closeBtn);
+
+
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Rechercher un objet...';
+        searchInput.classList.add('item-search');
+        modal.appendChild(searchInput);
+
+
+        const itemsList = document.createElement('div');
+        itemsList.classList.add('items-list');
+        modal.appendChild(itemsList);
+
+
+        const filterItems = () => {
+            const searchText = searchInput.value.toLowerCase();
+            Array.from(itemsList.children).forEach(itemDiv => {
+                const itemName = itemDiv.querySelector('span').textContent.toLowerCase();
+                itemDiv.style.display = itemName.includes(searchText) ? 'flex' : 'none';
+            });
+        };
+
+        searchInput.addEventListener('input', filterItems);
+
+
+        Object.values(items).forEach(async (item) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('item-option');
+
+            const img = document.createElement('img');
+            img.src = await Provider.getItemImageBase(item.image);
+            img.alt = item.name;
+            img.height = 40;
+            img.width = 40;
+            itemDiv.appendChild(img);
+
+            const itemName = document.createElement('span');
+            itemName.textContent = item.name;
+            itemDiv.appendChild(itemName);
+
+
+            itemDiv.onclick = () => {
+                this.equipItem(item, slotIndex);
+                this.renderItemSlots(itemSlotsElement);
+                this.renderModifiedStats(statsElement);
+                document.body.removeChild(modal);
+            };
+
+            itemsList.appendChild(itemDiv);
+        });
+
+
+        document.body.appendChild(modal);
+    }
+
+
+    async renderItemSlots(itemSlotsElement) {
+
+        itemSlotsElement.innerHTML = '';
+
+
+        for (let i = 0; i < 5; i++) {
+            const slotDiv = document.createElement('div');
+            slotDiv.classList.add('item-slot');
+            slotDiv.setAttribute('data-slot', i);
+
+            if (this.equippedItems[i]) {
+
+                const img = document.createElement('img');
+                img.src = await Provider.getItemImageBase(this.equippedItems[i].image);
+                img.alt = this.equippedItems[i].name;
+                slotDiv.appendChild(img);
+
+
+                const tooltip = document.createElement('div');
+                tooltip.classList.add('item-tooltip');
+                tooltip.innerHTML = `
+                    <strong>${this.equippedItems[i].name}</strong>
+                    <p>${this.equippedItems[i].plaintext || ''}</p>
+                `;
+                slotDiv.appendChild(tooltip);
+
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'X';
+                removeBtn.classList.add('remove-item');
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.unequipItem(i);
+                    this.renderItemSlots(itemSlotsElement);
+                    this.renderModifiedStats(document.getElementById('modified-stats'));
+                };
+                slotDiv.appendChild(removeBtn);
+            } else {
+
+                slotDiv.textContent = '+';
+                slotDiv.classList.add('empty-slot');
+            }
+
+
+            slotDiv.onclick = async () => {
+
+                const items = await Provider.fetchItems();
+                this.showItemSelectionModal(
+                    items,
+                    i,
+                    itemSlotsElement,
+                    document.getElementById('modified-stats')
+                );
+            };
+
+            itemSlotsElement.appendChild(slotDiv);
+        }
+    }
+
+
+    renderModifiedStats(statsElement) {
+        if (!statsElement) return;
+
+
+        statsElement.innerHTML = '';
+
+
+        const statsTitle = document.createElement('h6');
+        statsTitle.textContent = 'Statistiques modifiées:';
+        statsElement.appendChild(statsTitle);
+
+
+        const statsList = document.createElement('ul');
+
+
+        for (const key of Object.keys(this.baseStats)) {
+
+            if (key.includes('perlevel') || key === 'attackrange') continue;
+
+            const baseValue = this.baseStats[key];
+            const currentValue = this.modifiedStats[key];
+
+
+            if (Math.abs(currentValue - baseValue) > 0.01) {
+                const diff = currentValue - baseValue;
+                const sign = diff > 0 ? '+' : '';
+
+                const statItem = document.createElement('li');
+                statItem.textContent = `${this.getStatDisplayName(key)}: ${currentValue.toFixed(1)} (${sign}${diff.toFixed(1)})`;
+
+
+                if (diff > 0) {
+                    statItem.classList.add('stat-increased');
+                } else if (diff < 0) {
+                    statItem.classList.add('stat-decreased');
+                }
+
+                statsList.appendChild(statItem);
+            }
+        }
+
+
+        if (statsList.children.length === 0) {
+            const noChanges = document.createElement('p');
+            noChanges.textContent = 'Aucun changement de statistiques';
+            statsElement.appendChild(noChanges);
+        } else {
+            statsElement.appendChild(statsList);
+        }
+    }
+
+
+    getStatDisplayName(statKey) {
+        const displayNames = {
+            'hp': 'Points de vie',
+            'mp': 'Points de mana',
+            'armor': 'Armure',
+            'spellblock': 'Résistance magique',
+            'movespeed': 'Vitesse de déplacement',
+            'attackdamage': 'Dégâts d\'attaque',
+            'attackspeed': 'Vitesse d\'attaque',
+            'crit': 'Chance de critique',
+            'hpregen': 'Régénération de vie',
+            'mpregen': 'Régénération de mana'
+        };
+
+        return displayNames[statKey] || statKey;
     }
 
     nextSkin() {
