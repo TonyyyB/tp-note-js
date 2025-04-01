@@ -252,6 +252,9 @@ button:hover {
     gap: 10px;
 }
 
+.star-container {
+    color: gold;
+}
 
 gold {
     color: gold;
