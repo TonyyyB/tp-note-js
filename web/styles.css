@@ -135,16 +135,11 @@ button:hover {
 }
 
 .img-carousel {
-    position: relative;
-    display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .img-carousel button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
 
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
@@ -163,8 +158,6 @@ button:hover {
 }
 
 .img-carousel select {
-    position: absolute;
-    bottom: 10px;
     background-color: #2e2e2e;
     color: #c89b3c;
     padding: 5px;

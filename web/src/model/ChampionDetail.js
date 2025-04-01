@@ -254,9 +254,12 @@ export default class ChampionDetail {
         img.alt = this.name;
         imgCarousel.appendChild(img);
 
+        const selectDiv = document.createElement('div');
+        imgCarousel.appendChild(selectDiv);
+
         const prev = document.createElement('button');
         prev.innerHTML = "<";
-        imgCarousel.appendChild(prev);
+        selectDiv.appendChild(prev);
 
         this.skinSelect = document.createElement('select');
         this.skinSelect.onchange = async () => {
@@ -268,11 +271,11 @@ export default class ChampionDetail {
             option.textContent = skin.name == "default" ? this.name : skin.name;
             this.skinSelect.appendChild(option);
         });
-        imgCarousel.appendChild(this.skinSelect);
+        selectDiv.appendChild(this.skinSelect);
 
         const next = document.createElement('button');
         next.innerHTML = ">";
-        imgCarousel.appendChild(next);
+        selectDiv.appendChild(next);
 
         prev.onclick = () => this.prevSkin();
         next.onclick = () => this.nextSkin();
