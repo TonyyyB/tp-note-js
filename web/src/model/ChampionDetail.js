@@ -239,6 +239,33 @@ export default class ChampionDetail {
     async renderDetail() {
         const detail = document.createElement('div');
         detail.classList.add('detail');
+        const divNote = document.createElement('div');
+        detail.appendChild(divNote);
+        const noteText = document.createElement('h3');
+        noteText.textContent = "Note du personnage:";
+        divNote.appendChild(noteText);
+        const moyenne = await Provider.getMoyenne(this.id);
+        const starContainer = document.createElement('div');
+        starContainer.classList.add('star-container');
+
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.classList.add('star');
+            if (moyenne >= i) {
+                star.textContent = '★';
+            } else if (moyenne > i - 1) {
+                star.textContent = '★';
+                const percentage = (moyenne - (i - 1)) * 100;
+                star.style.background = `linear-gradient(to right, gold ${percentage}%, transparent ${percentage}%)`;
+                star.style.webkitBackgroundClip = 'text';
+                star.style.webkitTextFillColor = 'transparent';
+            } else {
+                star.textContent = '☆';
+            }
+            starContainer.appendChild(star);
+        }
+
+        divNote.appendChild(starContainer);
 
         const divImage = document.createElement('div');
         divImage.classList.add("image");
@@ -403,7 +430,40 @@ export default class ChampionDetail {
             Provider.addToFavorites(this);
         };
         detail.appendChild(addFavoriteButton);
+        const ratingDiv = document.createElement('div');
+        ratingDiv.classList.add('rating');
 
+        const stars = [];
+        const note = await Provider.getNote(this.id);
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.classList.add('star');
+            if (note !== null) {
+                if (i < note) {
+                    star.textContent = '★';
+                } else {
+                    star.textContent = '☆';
+                }
+            } else {
+                star.textContent = '☆';
+            }
+            star.dataset.value = i;
+            if (!note) star.onclick = () => {
+                stars.forEach((s, index) => {
+                    s.textContent = index < i ? '★' : '☆';
+                });
+                console.log(`Note attribuée: ${i}`);
+                Provider.addNote(i, this.id);
+                stars.forEach((s, index) => {
+                    s.onclick = null;
+                })
+            };
+
+            stars.push(star);
+            ratingDiv.appendChild(star);
+        }
+
+        detail.appendChild(ratingDiv);
         return detail;
     }
 
