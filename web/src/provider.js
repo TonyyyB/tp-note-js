@@ -135,4 +135,82 @@ export default class Provider {
         });
         localStorage.setItem('favorites', JSON.stringify(favorites));
     }
+
+    static async addNote(note, championId) {
+        if (note < 1 || note > 5) {
+            alert("La note doit être comprise entre 1 et 5.");
+            return;
+        }
+
+        try {
+            const response = await fetch(CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.notes);
+            const notesData = await response.json();
+
+            let notesDataLocal = JSON.parse(localStorage.getItem('notes')) || {};
+
+            if (notesDataLocal[championId]) {
+                alert(`Vous avez déjà laissé une note pour le champion ${championId}.`);
+                return;
+            }
+
+            if (!notesDataLocal[championId]) {
+                notesDataLocal[championId] = [];
+            }
+
+            notesDataLocal[championId].push(note);
+            localStorage.setItem('notes', JSON.stringify(notesDataLocal));
+
+            if (!notesData[championId]) {
+                notesData[championId] = [];
+            }
+
+            notesData[championId].push(note);
+
+            // Assuming the API supports updating the notes via a PUT request
+            await fetch(CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.notes, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(notesData)
+            });
+
+            alert(`Note ajoutée pour le champion ${championId} !`);
+        } catch (error) {
+            console.error("addNote:", error);
+            alert("Une erreur s'est produite lors de l'ajout de la note.");
+        }
+    }
+
+    static async getNote(championId) {
+        try {
+            const notesDataLocal = JSON.parse(localStorage.getItem('notes')) || {};
+            if (notesDataLocal[championId]) {
+                return notesDataLocal[championId];
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error("getNote:", error);
+            return null;
+        }
+    }
+
+    static async getMoyenne(championId) {
+        try {
+            const response = await fetch(CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.notes);
+            const notesData = await response.json();
+
+            if (notesData[championId] && notesData[championId].length > 0) {
+                const notes = notesData[championId];
+                const sum = notes.reduce((acc, note) => acc + note, 0);
+                return sum / notes.length;
+            } else {
+                return null; // No notes available for the given championId
+            }
+        } catch (error) {
+            console.error("getMoyenne:", error);
+            return null;
+        }
+    }
 }

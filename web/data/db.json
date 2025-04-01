@@ -8,5 +8,24 @@
         "spellImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/spell/",
         "passiveImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/passive/",
         "itemImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/item/"
+    },
+    "notes": {
+        "Aatrox": [
+            5
+        ],
+        "Akshan": [
+            5
+        ],
+        "Ashe": [
+            4,
+            5
+        ],
+        "Alistar": [
+            5,
+            1
+        ],
+        "Ahri": [
+            2
+        ]
     }
 }
