@@ -284,37 +284,7 @@ export default class ChampionDetail {
         divInfoBase.classList.add("info-base");
         detail.appendChild(divInfoBase);
 
-        const divSpell = document.createElement('div');
-        divSpell.classList.add("spell");
-        detail.appendChild(divSpell);
-
-        const imagePassive = document.createElement('img');
-        imagePassive.src = await Provider.getPassiveImageBase(this.passive.image);
-
-        const ulPassive = document.createElement('ul');
-        ulPassive.innerHTML = `
-            <li>${this.passive.name}</li>
-            <li>Description: ${this.passive.description}</li>
-        `;
-
-        divSpell.appendChild(imagePassive);
-        divSpell.appendChild(ulPassive);
-
-        for (const spell of this.spells) {
-            const spellDiv = document.createElement('div');
-            const imageSpell = document.createElement('img');
-            imageSpell.src = await Provider.getSpellImageBase(spell.image);
-            spellDiv.appendChild(imageSpell);
-            const ulSpell = document.createElement('ul');
-            ulSpell.innerHTML = `
-                <li>${spell.name}</li>
-                <li>Description: ${spell.description}</li>
-                <li>Cooldown: ${spell.cooldown}</li>
-            `;
-
-            spellDiv.appendChild(ulSpell);
-            divSpell.appendChild(spellDiv);
-        }
+        detail.appendChild(await this.renderSpellsList());
 
         const h2 = document.createElement('h2');
         h2.textContent = this.name;
@@ -435,6 +405,69 @@ export default class ChampionDetail {
         detail.appendChild(addFavoriteButton);
 
         return detail;
+    }
+
+    async renderSpellsList() {
+        const divSpell = document.createElement('div');
+        divSpell.classList.add("spell");
+
+        const table = document.createElement('table');
+        divSpell.appendChild(table);
+
+        const passiveTr = document.createElement('tr');
+        table.appendChild(passiveTr);
+
+        const passiveImageTd = document.createElement('td');
+        passiveImageTd.classList.add('image-container');
+        passiveTr.appendChild(passiveImageTd);
+
+        const imagePassive = document.createElement('img');
+        imagePassive.src = await Provider.getPassiveImageBase(this.passive.image);
+
+        const h4Passive = document.createElement('h4');
+        h4Passive.textContent = this.passive.name;
+
+        passiveImageTd.appendChild(imagePassive);
+        passiveImageTd.appendChild(h4Passive);
+
+        const passiveDescTd = document.createElement('td');
+        passiveTr.appendChild(passiveDescTd);
+
+        const ulPassive = document.createElement('ul');
+        ulPassive.innerHTML = `
+            <li>Description: ${this.passive.description}</li>
+        `;
+
+        passiveDescTd.appendChild(ulPassive);
+
+        for (const spell of this.spells) {
+            const spellTr = document.createElement('tr');
+            table.appendChild(spellTr);
+
+            const spellImageTd = document.createElement('td');
+            spellTr.appendChild(spellImageTd);
+
+            const spellImage = document.createElement('img');
+            spellImage.src = await Provider.getSpellImageBase(spell.image);
+
+            const spellh4 = document.createElement('h4');
+            spellh4.textContent = spell.name;
+
+            spellImageTd.appendChild(spellImage);
+            spellImageTd.appendChild(spellh4);
+
+            const spellDescTd = document.createElement('td');
+            spellTr.appendChild(spellDescTd);
+
+            const ulSpell = document.createElement('ul');
+            ulSpell.innerHTML = `
+                <li>Description: ${spell.description}</li>
+                <li>Cooldown: ${spell.cooldown}</li>
+            `;
+            spellDescTd.appendChild(ulSpell);
+        }
+
+        return divSpell;
     }
 
 
