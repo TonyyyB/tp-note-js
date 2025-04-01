@@ -31,6 +31,7 @@ export default class Item {
         img.alt = this.name;
         img.height = 64;
         img.width = 64;
+        img.loading = 'lazy';
         card.appendChild(img);
 
         const h2 = document.createElement('h2');
@@ -51,6 +52,7 @@ export default class Item {
         img.classList.add('detail-image');
         img.src = await Provider.getItemImageBase(this.image);
         img.alt = this.name;
+        img.loading = 'lazy';
         divImage.appendChild(img);
 
         const divInfoBase = document.createElement('div');
