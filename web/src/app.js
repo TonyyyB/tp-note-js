@@ -67,8 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-
-
         await renderList(champions);
 
         const searchInput = document.getElementById("search");
@@ -82,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.hash = `favori/`;
         }
     }
-    
+
 
 
     async function displayItems() {
