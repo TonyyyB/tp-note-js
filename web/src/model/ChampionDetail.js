@@ -493,6 +493,7 @@ export default class ChampionDetail {
             const img = document.createElement('img');
             img.src = await Provider.getItemImageBase(item.image);
             img.alt = item.name;
+            img.loading = "lazy";
             img.height = 40;
             img.width = 40;
             itemDiv.appendChild(img);
@@ -532,6 +533,7 @@ export default class ChampionDetail {
                 const img = document.createElement('img');
                 img.src = await Provider.getItemImageBase(this.equippedItems[i].image);
                 img.alt = this.equippedItems[i].name;
+                img.loading = "lazy";
                 slotDiv.appendChild(img);
 
 
@@ -669,7 +671,7 @@ export default class ChampionDetail {
         const img = document.createElement('img');
         img.src = await Provider.getChampionSquareImageBase(this.image);
         img.alt = this.name;
-        img.loading ='lazy';
+        img.loading = 'lazy';
         card.appendChild(img);
 
         const h2 = document.createElement('h2');
