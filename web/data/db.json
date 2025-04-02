@@ -1,0 +1,25 @@
+{
+  "links": {
+    "champions": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/champion.json",
+    "champion": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/champion/",
+    "items": "https://ddragon.leagueoflegends.com/cdn/15.5.1/data/fr_FR/item.json",
+    "championSquareImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/champion/",
+    "championLoadingImageBase": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/",
+    "spellImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/spell/",
+    "passiveImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/passive/",
+    "itemImageBase": "https://ddragon.leagueoflegends.com/cdn/15.5.1/img/item/"
+  },
+  "notes": {
+    "aatrox": [
+      5,
+      4,
+      5,
+      4,
+      1,
+      2
+    ],
+    "Amumu": [
+      3
+    ]
+  }
+}
